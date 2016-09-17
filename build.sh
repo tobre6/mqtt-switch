@@ -18,8 +18,7 @@ else
     touch default_settings.h
 fi
 
-VERSION=xxx
-#VERSION=$(git log --pretty=format:%h -n 1)
+VERSION=$(git log --pretty=format:%h -n 1)
 echo "#define VERSION \"$VERSION\"" > version.h
 
 ARDUINO_IDE_VERSION=1.6.9
