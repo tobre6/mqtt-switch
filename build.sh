@@ -89,8 +89,8 @@ cp ../../*.ino ../../*.h ../../*.cpp .
 
 if [ $(uname) == 'Darwin' ]
 then
-    make -f makeEspArduino.mk all
-#screen $UPLOAD_PORT 115200
+    make -f makeEspArduino.mk upload
+    screen $UPLOAD_PORT 115200
 else
     make -f makeEspArduino.mk all
 fi
