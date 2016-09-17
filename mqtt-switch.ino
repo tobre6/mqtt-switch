@@ -5,9 +5,7 @@
 #include "Webserver.h"
 #include "Settings.h"
 
-#define MQTT_CLIENT "Door-Buzzer"
 #define MQTT_PORT   1883
-#define MQTT_TOPIC  "home/doorbuzzer"
 
 #define RELAY 4
 #define CONNECTION_CHECK_INTERVAL 10 // In seconds
@@ -38,9 +36,11 @@ void setup() {
   if (!settings->load()) {
     Serial.println("Initializing settings");
     #ifdef DEFAULT_SETTINGS
+      settings->setName(NAME);
       settings->setWifiSSID(WIFI_SSID);
       settings->setWifiPassword(WIFI_PASS);
       settings->setMQTTServer(MQTT_SERVER);
+      settings->setMQTTTopic(MQTT_TOPIC);
     #endif
     settings->save();
   }
@@ -83,14 +83,14 @@ void connectToMqtt() {
   Serial.println("Connecting to MQTT");
   int retries = 10;
 
-  while (!mqttClient->connect(MQTT::Connect(MQTT_CLIENT).set_keepalive(90)) && retries--) {
+  while (!mqttClient->connect(MQTT::Connect(settings->getName()).set_keepalive(90)) && retries--) {
     Serial.print(" .");
     delay(1000);
   }
 
   if(mqttClient->connected()) {
     Serial.println("Connected to MQTT");
-    mqttClient->subscribe(MQTT_TOPIC);
+    mqttClient->subscribe(settings->getMQTTTopic());
   }
 }
 

@@ -42,6 +42,14 @@ void Settings::save() {
   file.close();
 }
 
+void Settings::setName(String name) {
+  strlcpy(container.name, name.c_str(), sizeof(container.name));
+}
+
+String Settings::getName() {
+  return String(container.name);
+}
+
 void Settings::setWifiSSID(String ssid) {
   strlcpy(container.wifiSSID, ssid.c_str(), sizeof(container.wifiSSID));
 }
@@ -64,6 +72,14 @@ void Settings::setMQTTServer(String server) {
 
 String Settings::getMQTTServer() {
   return String(container.mqttServer);
+}
+
+void Settings::setMQTTTopic(String topic) {
+  strlcpy(container.mqttTopic, topic.c_str(), sizeof(container.mqttTopic));
+}
+
+String Settings::getMQTTTopic() {
+  return String(container.mqttTopic);
 }
 
 

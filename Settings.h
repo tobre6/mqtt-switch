@@ -8,6 +8,9 @@ public:
   boolean load();
   void save();
 
+  void setName(String);
+  String getName();
+
   void setWifiSSID(String);
   String getWifiSSID();
 
@@ -17,12 +20,17 @@ public:
   void setMQTTServer(String);
   String getMQTTServer();
 
+  void setMQTTTopic(String);
+  String getMQTTTopic();
+
 private:
 
   struct CONTAINER {
+    char name[32];
     char wifiSSID[32];
     char wifiPassword[32];
     char mqttServer[32];
+    char mqttTopic[32];
   } container;
 };
 
