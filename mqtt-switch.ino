@@ -105,7 +105,7 @@ void mqttCallback(const MQTT::Publish& pub) {
     turnOffBuzzer();
   }
 
-  mqttClient->publish(MQTT::Publish(MQTT_TOPIC"/status", pub.payload_string()).set_retain(0).set_qos(1));
+  mqttClient->publish(MQTT::Publish(settings->getMQTTTopic() + "/status", pub.payload_string()).set_retain(0).set_qos(1));
 }
 
 void turnOffBuzzer() {
