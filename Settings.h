@@ -34,6 +34,8 @@ private:
     char wifiPassword[32];
     char mqttServer[32];
     char mqttTopic[32];
+    char mqttUsername[32]; // For future
+    char mqttPassword[32]; // For future
     int relay;
   } container;
 };
