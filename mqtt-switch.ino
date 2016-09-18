@@ -29,8 +29,8 @@ void checkConnection();
 void setup() {
   Serial.begin(115200);
 
-  webserver = new Webserver;
   settings = new Settings;
+  webserver = new Webserver(settings);
   if (!settings->load()) {
     Serial.println("Initializing settings");
     #ifdef DEFAULT_SETTINGS
