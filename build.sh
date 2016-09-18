@@ -13,6 +13,8 @@ then
     read mqtt_server
     printf "MQTT topic: "
     read mqtt_topic
+    printf "Relay pin: "
+    read relay_pin
 
     echo "#define DEFAULT_SETTINGS" > default_settings.h
     echo "#define NAME \"$name\"" >> default_settings.h
@@ -20,6 +22,7 @@ then
     echo "#define WIFI_PASS \"$wifi_password\"" >> default_settings.h
     echo "#define MQTT_SERVER \"$mqtt_server\"" >> default_settings.h
     echo "#define MQTT_TOPIC \"$mqtt_topic\"" >> default_settings.h
+    echo "#define RELAY $relay_pin" >> default_settings.h
 else
     touch default_settings.h
 fi

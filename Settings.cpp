@@ -82,4 +82,12 @@ String Settings::getMQTTTopic() {
   return String(container.mqttTopic);
 }
 
+void Settings::setRelayPin(int relayPin) {
+  container.relay = relayPin;
+}
+
+int Settings::getRelayPin() {
+  return container.relay;
+}
+
 

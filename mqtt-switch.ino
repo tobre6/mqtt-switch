@@ -7,7 +7,6 @@
 
 #define MQTT_PORT   1883
 
-#define RELAY 4
 #define CONNECTION_CHECK_INTERVAL 10 // In seconds
 
 extern "C" { 
@@ -29,7 +28,6 @@ void checkConnection();
 
 void setup() {
   Serial.begin(115200);
-  pinMode(RELAY, OUTPUT);
 
   webserver = new Webserver;
   settings = new Settings;
@@ -41,9 +39,12 @@ void setup() {
       settings->setWifiPassword(WIFI_PASS);
       settings->setMQTTServer(MQTT_SERVER);
       settings->setMQTTTopic(MQTT_TOPIC);
+      settings->setRelayPin(RELAY);
     #endif
     settings->save();
   }
+
+  pinMode(settings->getRelayPin(), OUTPUT);
 
   mqttClient = new PubSubClient(wifiClient, settings->getMQTTServer(), MQTT_PORT);
   mqttClient->set_callback(mqttCallback);
@@ -110,12 +111,12 @@ void mqttCallback(const MQTT::Publish& pub) {
 
 void turnOffBuzzer() {
   Serial.println("Turning buzzer off");
-  digitalWrite(RELAY, LOW);
+  digitalWrite(settings->getRelayPin(), LOW);
 }
 
 void turnOnBuzzer() {
   Serial.println("Turning buzzer on");
-  digitalWrite(RELAY, HIGH);
+  digitalWrite(settings->getRelayPin(), HIGH);
 }
 
 void checkConnection() {
