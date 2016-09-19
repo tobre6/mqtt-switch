@@ -1,8 +1,11 @@
 language: c
 compiler:
 - gcc
+env:
+ - FLASH_SIZE=1M64
+ - FLASH_SIZE=4M3M
 script:
-- ./build.sh
+ - ./build.sh
 deploy:
   provider: s3
   access_key_id: AKIAJVRA3ZY4G2FZK4LQ
