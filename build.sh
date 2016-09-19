@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+#FLASH_SIZE=1M64
+
+if [ ! $FLASH_SIZE ]
+then
+    FLASH_SIZE=4M3M
+fi
+
 if [ ! -e "default_settings.h" ] && [ $(uname) == 'Darwin' ]
 then
     printf "Name: "
@@ -23,8 +30,10 @@ then
     echo "#define MQTT_SERVER \"$mqtt_server\"" >> default_settings.h
     echo "#define MQTT_TOPIC \"$mqtt_topic\"" >> default_settings.h
     echo "#define RELAY $relay_pin" >> default_settings.h
+
+    echo "#define FLASH_SIZE \"$FLASH_SIZE\"" >> default_settings.h
 else
-    touch default_settings.h
+    echo "#define FLASH_SIZE \"$FLASH_SIZE\"" > default_settings.h
 fi
 
 VERSION=$(git log --pretty=format:%h -n 1)
@@ -93,6 +102,7 @@ cd makeEspArduino
 export SKETCH=mqtt-switch.ino
 export UPLOAD_PORT=/dev/cu.usbserial-A92HD3JZ
 export LIBS="$ESP_ROOT/libraries/ESP8266WiFi/ $ESP_ROOT/libraries/ESP8266WebServer/ $ESP_ROOT/libraries/ESP8266HTTPClient/ $ESP_ROOT/libraries/ESP8266httpUpdate/ ../pubsubclient/src/"
+export FLASH_DEF=$FLASH_SIZE
 
 cp ../../*.ino ../../*.h ../../*.cpp .
 
@@ -110,4 +120,4 @@ if [ ! -e "dist" ]
 then
     mkdir dist
 fi
-cp /tmp/mkESP/mqtt-switch_generic/mqtt-switch.bin dist/MQTT-Switch.bin
+cp /tmp/mkESP/mqtt-switch_generic/mqtt-switch.bin dist/MQTT-Switch.$FLASH_SIZE.bin

@@ -3,6 +3,7 @@
 
 #include "Webserver.h"
 #include "Settings.h"
+#include "default_settings.h"
 #include "version.h"
 
 
@@ -23,6 +24,7 @@ Webserver::Webserver(Settings* settings) {
     html += "<h1>" + this->settings->getName() + "</h1>";
     html += "<p class=\"lead\">Version: <a target=\"_blank\" href=\"https://github.com/2ndalpha/mqtt-switch/commit/" + String(VERSION) + "\">" + String(VERSION) + "</a><br/>";
     html += "Built: " + String(compile_date) + "<br/>";
+    html += "Flash size: " + String(FLASH_SIZE) + "<br/>";
     html += "Uptime: " + uptime() + "</p>";
     html += "<p class=\"lead\">MQTT Server: " + this->settings->getMQTTServer() + "<br/>";
     html += "MQTT Topic: " + this->settings->getMQTTTopic() + "<br/>";
@@ -37,7 +39,7 @@ Webserver::Webserver(Settings* settings) {
     Serial.println("Commence OTA");
     this->server->sendHeader("Location", "/", true);
     this->server->send ( 302, "text/plain", "");
-    ESPhttpUpdate.update("ota.clockwise.ee", 80, "/MQTT-Switch.bin");
+    ESPhttpUpdate.update("ota.clockwise.ee", 80, "/MQTT-Switch." + String(FLASH_SIZE) + ".bin");
   });
 
   server->begin();
