@@ -22,8 +22,8 @@ unsigned long lastConnectionCheckTime = 0;
 bool connectToWifi();
 void connectToMqtt();
 void mqttCallback(const MQTT::Publish&);
-void turnOffBuzzer();
-void turnOnBuzzer();
+void turnOff();
+void turnOn();
 void checkConnection();
 
 void setup() {
@@ -62,7 +62,7 @@ void loop() {
 }
 
 bool connectToWifi() {
-  Serial.println("Connecting to Wifi");
+  Serial.println("Connecting to Wifi " + settings->getWifiSSID());
   int retries = 10;
   WiFi.begin(settings->getWifiSSID().c_str(), settings->getWifiPassword().c_str());
   while ((WiFi.status() != WL_CONNECTED) && retries--) {
@@ -99,23 +99,23 @@ void mqttCallback(const MQTT::Publish& pub) {
   Serial.print("MQTT message: ");
   Serial.println(pub.payload_string());
 
-  if (pub.payload_string() == "on") {
-    turnOnBuzzer();
+  if (pub.payload_string() == "on" || pub.payload_string() == "1") {
+    turnOn();
   }
-  if (pub.payload_string() == "off") {
-    turnOffBuzzer();
+  if (pub.payload_string() == "off" || pub.payload_string() == "0") {
+    turnOff();
   }
 
   mqttClient->publish(MQTT::Publish(settings->getMQTTTopic() + "/status", pub.payload_string()).set_retain(0).set_qos(1));
 }
 
-void turnOffBuzzer() {
-  Serial.println("Turning buzzer off");
+void turnOff() {
+  Serial.println("Turning off");
   digitalWrite(settings->getRelayPin(), LOW);
 }
 
-void turnOnBuzzer() {
-  Serial.println("Turning buzzer on");
+void turnOn() {
+  Serial.println("Turning on");
   digitalWrite(settings->getRelayPin(), HIGH);
 }
 
