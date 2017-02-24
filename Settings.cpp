@@ -5,6 +5,8 @@
 
 boolean Settings::load() {
 
+  SPIFFS.format();
+
   Serial.println("Loading settings");
 
   memset(&container, 0x00, sizeof(CONTAINER));

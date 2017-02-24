@@ -3,9 +3,13 @@ set -e
 
 #FLASH_SIZE=1M64
 
+write_config() {
+echo "upload_port=\"$1\"" > .conf
+}
+
 if [ ! $FLASH_SIZE ]
 then
-    FLASH_SIZE=4M3M
+    FLASH_SIZE=1M64
 fi
 
 if [ ! -e "default_settings.h" ] && [ $(uname) == 'Darwin' ]
@@ -32,9 +36,25 @@ then
     echo "#define RELAY $relay_pin" >> default_settings.h
 
     echo "#define FLASH_SIZE \"$FLASH_SIZE\"" >> default_settings.h
-else
-    echo "#define FLASH_SIZE \"$FLASH_SIZE\"" > default_settings.h
 fi
+
+if [ ! -e ".conf" ]
+then
+    printf "Upload port: "
+    read -e upload_port
+
+    write_config $upload_port
+else
+    source .conf
+    printf "Upload port is $upload_port [enter to use the same]: "
+    read -e new_upload_port
+    if [ ! $new_upload_port == "" ]
+    then
+        write_config $new_upload_port
+        upload_port=$new_upload_port
+    fi
+fi
+
 
 VERSION=$(git log --pretty=format:%h -n 1)
 echo "#define VERSION \"$VERSION\"" > version.h
@@ -100,8 +120,8 @@ fi
 cd makeEspArduino
 
 export SKETCH=mqtt-switch.ino
-export UPLOAD_PORT=/dev/cu.usbserial-A92HD3JZ
-export LIBS="$ESP_ROOT/libraries/ESP8266WiFi/ $ESP_ROOT/libraries/ESP8266WebServer/ $ESP_ROOT/libraries/ESP8266HTTPClient/ $ESP_ROOT/libraries/ESP8266httpUpdate/ ../pubsubclient/src/"
+export UPLOAD_PORT=$upload_port
+export LIBS="$ESP_ROOT/libraries/ESP8266WiFi/ $ESP_ROOT/libraries/ESP8266WebServer/ $ESP_ROOT/libraries/ESP8266HTTPClient/ $ESP_ROOT/libraries/ESP8266httpUpdate/ $ESP_ROOT/libraries/ESP8266HTTPUpdateServer/ ../pubsubclient/src/"
 export FLASH_DEF=$FLASH_SIZE
 
 cp ../../*.ino ../../*.h ../../*.cpp .
@@ -109,7 +129,7 @@ cp ../../*.ino ../../*.h ../../*.cpp .
 if [ $(uname) == 'Darwin' ]
 then
     make -f makeEspArduino.mk upload
-    screen $UPLOAD_PORT 115200
+#    screen $UPLOAD_PORT 115200
 else
     make -f makeEspArduino.mk all
 fi
@@ -120,4 +140,4 @@ if [ ! -e "dist" ]
 then
     mkdir dist
 fi
-cp /tmp/mkESP/mqtt-switch_generic/mqtt-switch.bin dist/MQTT-Switch.$FLASH_SIZE.bin
+cp /tmp/mkESP/mqtt-switch_generic/mqtt-switch.bin dist/mqtt-switch.$FLASH_SIZE.bin
